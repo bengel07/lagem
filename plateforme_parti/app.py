@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
-from models import Membre, Message, Publication, Departement, User, Commune, SectionCommunale, db
+from plateforme_parti.models import Membre, Message, Publication, Departement, User, Commune, SectionCommunale, db
 
 import os
 from datetime import datetime, timedelta
