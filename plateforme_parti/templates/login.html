@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Connexion - Parti Politique{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h3 class="mb-0"><i class="fas fa-sign-in-alt"></i> Connexion</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" required placeholder="votre@email.com">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Mot de passe</label>
+                        <input type="password" name="password" class="form-control" required placeholder="••••••">
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-sign-in-alt"></i> Se connecter
+                        </button>
+                    </div>
+                </form>
+
+                <hr>
+
+                <div class="text-center">
+                    <p>Pas encore membre ? <a href="{{ url_for('inscription') }}">Inscrivez-vous ici</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6 class="text-muted">Comptes de démonstration:</h6>
+                <ul class="small">
+                    <li><strong>Admin Général:</strong> admin@parti.ht / Admin123!</li>
+                    <li><strong>Admin Ouest:</strong> ouest@parti.ht / Admin123!</li>
+                    <li><strong>Membre:</strong> (après inscription et validation)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

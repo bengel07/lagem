@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - {{ departement.nom }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4"><i class="fas fa-building"></i> Département {{ departement.nom }}</h1>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-card primary text-center">
+            <i class="fas fa-users fa-3x"></i>
+            <div class="stat-number">{{ stats.total }}</div>
+            <div class="stat-label">Total Membres</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card success text-center">
+            <i class="fas fa-user-check fa-3x"></i>
+            <div class="stat-number">{{ stats.actifs }}</div>
+            <div class="stat-label">Membres Actifs</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card warning text-center">
+            <i class="fas fa-user-clock fa-3x"></i>
+            <div class="stat-number">{{ stats.en_attente }}</div>
+            <div class="stat-label">En Attente</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-5">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fas fa-clock"></i> Membres à valider</h5>
+            </div>
+            <div class="card-body">
+                {% set has_pending = false %}
+                {% for membre in membres if membre.statut == 'en_attente' %}
+                    {% set has_pending = true %}
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <h6 class="card-title">{{ membre.nom }} {{ membre.prenom }}</h6>
+                            <p class="mb-1"><i class="fas fa-envelope"></i> {{ membre.user.email }}</p>
+                            <p class="mb-1"><i class="fas fa-phone"></i> {{ membre.telephone }}</p>
+                            <p class="mb-1"><i class="fas fa-map-marker-alt"></i> {{ membre.ville_natale }}</p>
+                            <div class="mt-2">
+                                <a href="{{ url_for('valider_membre', membre_id=membre.id) }}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-check"></i> Valider
+                                </a>
+                                <a href="{{ url_for('suspendre_membre', membre_id=membre.id) }}" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-ban"></i> Suspendre
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% if not has_pending %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
+                        <p class="text-muted">Aucun membre en attente</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-edit"></i> Publier dans le département</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('publication_generale') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Titre</label>
+                        <input type="text" name="titre" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contenu</label>
+                        <textarea name="contenu" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-paper-plane"></i> Publier
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-list"></i> Liste des membres</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nom complet</th>
+                                <th>Contact</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for membre in membres %}
+                            <tr>
+                                <td>{{ membre.nom }} {{ membre.prenom }}</td>
+                                <td>{{ membre.telephone }}</td>
+                                <td>
+                                    {% if membre.statut == 'actif' %}
+                                        <span class="badge bg-success">Actif</span>
+                                    {% elif membre.statut == 'en_attente' %}
+                                        <span class="badge bg-warning">Attente</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Suspendu</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if membre.statut == 'actif' %}
+                                        <a href="{{ url_for('suspendre_membre', membre_id=membre.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Suspendre ce membre?')">
+                                            <i class="fas fa-ban"></i>
+                                        </a>
+                                    {% elif membre.statut == 'en_attente' %}
+                                        <a href="{{ url_for('valider_membre', membre_id=membre.id) }}" class="btn btn-sm btn-success">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

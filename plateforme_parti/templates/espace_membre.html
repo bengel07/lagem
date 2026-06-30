@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}Espace Membre{% endblock %}
+
+{% block content %}
+<h1 class="mb-4"><i class="fas fa-user-circle"></i> Mon Espace Membre</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-id-card"></i> Mon Profil</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <i class="fas fa-user-circle fa-5x text-primary"></i>
+                    <h4 class="mt-2">{{ membre.nom }} {{ membre.prenom }}</h4>
+                    <span class="badge {% if membre.statut == 'actif' %}bg-success{% else %}bg-warning{% endif %}">
+                        {{ membre.statut|upper }}
+                    </span>
+                </div>
+                <hr>
+                <p><i class="fas fa-envelope"></i> <strong>Email:</strong> {{ membre.user.email }}</p>
+                <p><i class="fas fa-phone"></i> <strong>Téléphone:</strong> {{ membre.telephone }}</p>
+                <p><i class="fas fa-map-marker-alt"></i> <strong>Adresse:</strong> {{ membre.adresse_actuelle }}</p>
+                <p><i class="fas fa-city"></i> <strong>Ville natale:</strong> {{ membre.ville_natale }}</p>
+                <p><i class="fas fa-building"></i> <strong>Département:</strong> {{ membre.departement.nom }}</p>
+                {% if membre.commune %}
+                <p><i class="fas fa-city"></i> <strong>Commune:</strong> {{ membre.commune.nom }}</p>
+                {% endif %}
+                {% if membre.section %}
+                <p><i class="fas fa-map-marker-alt"></i> <strong>Section Communale:</strong> {{ membre.section.nom }}</p>
+                {% endif %}
+                <p><i class="fas fa-briefcase"></i> <strong>Occupation:</strong> {{ membre.occupation }}</p>
+                <p><i class="fas fa-graduation-cap"></i> <strong>Niveau d'étude:</strong> {{ membre.niveau_etude }}</p>
+                <p><i class="fas fa-heart"></i> <strong>Statut matrimonial:</strong>
+                    {% if membre.status_matrimonial == 'celibataire' %}Célibataire
+                    {% elif membre.status_matrimonial == 'marie' %}Marié(e)
+                    {% elif membre.status_matrimonial == 'divorce' %}Divorcé(e)
+                    {% else %}Veuf/Veuve
+                    {% endif %}
+                </p>
+                <p><i class="fas fa-child"></i> <strong>Nombre d'enfants:</strong> {{ membre.nb_enfants }}</p>
+                <p><i class="fas fa-calendar-alt"></i> <strong>Inscrit le:</strong> {{ membre.date_inscription.strftime('%d/%m/%Y') }}</p>
+                <p><i class="fas fa-clock"></i> <strong>À l'adresse depuis:</strong> {{ membre.temps_adresse }} ans</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-comments"></i> Messagerie</h5>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs mb-3" id="messageTab" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#envoyer" type="button">
+                            <i class="fas fa-paper-plane"></i> Envoyer
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#recus" type="button">
+                            <i class="fas fa-inbox"></i> Reçus
+                            {% set unread_count = messages_recus|selectattr('lu', 'equalto', false)|list|length %}
+                            {% if unread_count > 0 %}
+                            <span class="badge bg-danger ms-1">{{ unread_count }}</span>
+                            {% endif %}
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#envoyes" type="button">
+                            <i class="fas fa-outdent"></i> Envoyés
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="envoyer">
+                        <form method="POST" action="{{ url_for('envoyer_message') }}">
+                            <div class="mb-3">
+                                <label class="form-label">Destinataire</label>
+                                <select name="destinataire_id" class="form-select" required>
+                                    <option value="">Choisir un membre</option>
+                                    {% for autre in autres_membres %}
+                                    <option value="{{ autre.user.id }}">{{ autre.nom }} {{ autre.prenom }}
+                                        {% if autre.commune %}({{ autre.commune.nom }}){% else %}({{ autre.departement.nom }}){% endif %}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Message</label>
+                                <textarea name="contenu" class="form-control" rows="4" required placeholder="Votre message..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Envoyer
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="tab-pane fade" id="recus">
+                        {% for msg in messages_recus %}
+                        <div class="message-item {% if not msg.lu %}unread{% endif %} mb-3 p-3 border rounded {% if not msg.lu %}bg-light{% endif %}">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <strong><i class="fas fa-user"></i> {{ msg.expediteur.email }}</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        {% if msg.expediteur.membre %}
+                                        {{ msg.expediteur.membre.nom }} {{ msg.expediteur.membre.prenom }}
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                <small class="text-muted">{{ msg.date_envoi.strftime('%d/%m/%Y à %H:%M') }}</small>
+                            </div>
+                            <p class="mt-2 mb-2">{{ msg.contenu }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    {% if msg.lu %}
+                                    <i class="fas fa-check-double text-success"></i> Lu
+                                    {% else %}
+                                    <i class="fas fa-clock text-warning"></i> Non lu
+                                    {% endif %}
+                                </small>
+                                {% if not msg.lu %}
+                                <a href="{{ url_for('marquer_lu', message_id=msg.id) }}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-check"></i> Marquer comme lu
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                            <p class="text-muted">Aucun message reçu</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="tab-pane fade" id="envoyes">
+                        {% for msg in messages_envoyes %}
+                        <div class="message-item mb-3 p-3 border rounded">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <strong><i class="fas fa-user"></i> À: {{ msg.destinataire.email }}</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        {% if msg.destinataire.membre %}
+                                        {{ msg.destinataire.membre.nom }} {{ msg.destinataire.membre.prenom }}
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                <small class="text-muted">{{ msg.date_envoi.strftime('%d/%m/%Y à %H:%M') }}</small>
+                            </div>
+                            <p class="mt-2">{{ msg.contenu }}</p>
+                            <small class="text-muted">
+                                {% if msg.lu %}
+                                <i class="fas fa-check-double text-success"></i> Message lu
+                                {% else %}
+                                <i class="fas fa-clock text-warning"></i> Message non encore lu
+                                {% endif %}
+                            </small>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-outdent fa-4x text-muted mb-3"></i>
+                            <p class="text-muted">Aucun message envoyé</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-newspaper"></i> Actualités</h5>
+            </div>
+            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                {% for pub in publications %}
+                <div class="card mb-3 hover-shadow">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h6 class="card-title text-primary">{{ pub.titre }}</h6>
+                            {% if pub.type == 'departemental' %}
+                            <span class="badge bg-info">Départemental</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Général</span>
+                            {% endif %}
+                        </div>
+                        <p class="card-text small">{{ pub.contenu }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="far fa-calendar-alt"></i> {{ pub.date_creation.strftime('%d/%m/%Y') }}
+                                <i class="fas fa-user ms-3"></i> Publié par {{ pub.user.email }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-newspaper fa-4x text-muted mb-3"></i>
+                    <p class="text-muted">Aucune actualité pour le moment</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Accueil - Parti Politique{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-newspaper"></i> Dernières Actualités</h4>
+            </div>
+           <div class="card-body">
+                {% for pub in publications %}
+                <div class="card mb-3 hover-shadow">
+
+                    {% if pub.image %}
+                    <div class="text-center mt-2">
+                    <img src="{{ url_for('static', filename='uploads/publications/' ~ pub.image) }}"
+                         class="img-fluid rounded"
+                         style="width:100%; max-height:500px; object-fit:cover; display:inline-block;">
+                    </div>
+                    {% endif %}
+
+                    {% if pub.video %}
+                    <div class="ratio ratio-16x9 mb-3">
+                        <iframe
+                            src="{{ pub.video|replace('https://www.youtube.com/watch?v=', 'https://www.youtube.com/embed/')|replace('https://youtu.be/', 'https://www.youtube.com/embed/') }}"
+                            title="{{ pub.titre }}"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    {% endif %}
+
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+
+                            <h5 class="card-title text-primary mb-0">
+                                {{ pub.titre }}
+                            </h5>
+
+                            {% if pub.type == 'commercial' %}
+                                <span class="badge bg-warning text-dark">
+                                    Sponsorisé
+                                </span>
+                            {% else %}
+                                <span class="badge bg-primary">
+                                    Annonce officielle
+                                </span>
+                            {% endif %}
+
+                        </div>
+
+                        <p class="card-text">
+                            {{ pub.contenu }}
+                        </p>
+
+                        {% if pub.type == 'commercial' and pub.sponsor %}
+                        <p class="mb-2">
+                            <strong>Sponsor :</strong>
+                            {{ pub.sponsor }}
+                        </p>
+                        {% endif %}
+
+                        {% if pub.type == 'commercial' and pub.lien %}
+                        <a href="{{ pub.lien }}"
+                           target="_blank"
+                           class="btn btn-success btn-sm mb-2">
+                            <i class="fas fa-external-link-alt"></i>
+                            Visiter
+                        </a>
+                        {% endif %}
+
+                        <small class="text-muted d-block">
+
+                            <i class="far fa-calendar-alt"></i>
+                            Publié le
+                            {{ pub.date_creation.strftime('%d/%m/%Y à %H:%M') }}
+
+                            <i class="fas fa-user ms-3"></i>
+                            Par {{ pub.user.email }}
+
+                        </small>
+
+                        {% if pub.date_expiration %}
+                        <small class="d-block mt-2">
+
+                            {% set jours = (pub.date_expiration - now).days %}
+
+                            {% if jours > 30 %}
+                                <span class="text-success">
+                                    <i class="fas fa-clock"></i>
+                                    Expire dans {{ (jours / 30)|round|int }} mois
+                                </span>
+
+                            {% elif jours > 0 %}
+                                <span class="text-success">
+                                    <i class="fas fa-clock"></i>
+                                    Expire dans {{ jours }} jour(s)
+                                </span>
+
+                            {% else %}
+                                <span class="text-danger">
+                                    <i class="fas fa-times-circle"></i>
+                                    Expirée
+                                </span>
+                            {% endif %}
+
+                        </small>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+                {% else %}
+
+                <div class="text-center py-5">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+
+                    <p class="text-muted">
+                        Aucune publication pour le moment.
+                    </p>
+                </div>
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow mb-4 bg-gradient-success text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-hand-peace fa-3x mb-3"></i>
+                <h3>Rejoignez-nous !</h3>
+                <p>Devenez membre actif de notre parti politique et participez à la construction d'un avenir meilleur.</p>
+                <a href="{{ url_for('inscription') }}" class="btn btn-light btn-lg">
+                    <i class="fas fa-user-plus"></i> S'inscrire maintenant
+                </a>
+            </div>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-map-marker-alt"></i> Nos Départements</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for dept in departements %}
+                    <div class="col-md-6 mb-2">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-flag-checkered text-info me-2"></i>
+                            <span>{{ dept.nom }}</span>
+                        </div>
+                        <small class="text-muted">Chef-lieu: {{ dept.chef_lieu }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow mt-4">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fas fa-info-circle"></i> À propos</h5>
+            </div>
+            <div class="card-body">
+                <p>Notre parti politique œuvre pour le développement et le progrès de notre nation. Rejoignez-nous pour faire la différence!</p>
+                <hr>
+                <p><strong>Mission:</strong> Servir le peuple et défendre ses intérêts.</p>
+                <p><strong>Vision:</strong> Un avenir meilleur pour tous les citoyens.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Admin Général{% endblock %}
+
+{% block content %}
+<h1 class="mb-4"><i class="fas fa-tachometer-alt"></i> Tableau de bord - Admin Général</h1>
+
+<div class="card shadow mb-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0"><i class="fas fa-filter"></i> Filtrer par région</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <label>Département</label>
+                <select id="filter_dept" class="form-select">
+                    <option value="">Tous</option>
+                    {% for dept in departements %}
+                    <option value="{{ dept.id }}">{{ dept.nom }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label>Commune</label>
+                <select id="filter_commune" class="form-select" disabled>
+                    <option value="">Toutes</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label>Section</label>
+                <select id="filter_section" class="form-select" disabled>
+                    <option value="">Toutes</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card primary text-center">
+            <i class="fas fa-users fa-3x"></i>
+            <div class="stat-number">{{ stats.total_membres }}</div>
+            <div class="stat-label">Total Membres</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card success text-center">
+            <i class="fas fa-user-check fa-3x"></i>
+            <div class="stat-number">{{ stats.membres_actifs }}</div>
+            <div class="stat-label">Membres Actifs</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card warning text-center">
+            <i class="fas fa-user-clock fa-3x"></i>
+            <div class="stat-number">{{ stats.membres_attente }}</div>
+            <div class="stat-label">En Attente</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card info text-center">
+            <i class="fas fa-newspaper fa-3x"></i>
+            <div class="stat-number">{{ stats.total_publications }}</div>
+            <div class="stat-label">Publications</div>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard Admin Général ou Départemental -->
+<div class="card mb-4">
+    <div class="card-header bg-warning text-dark">
+        <h5 class="mb-0"><i class="fas fa-clock"></i> Membres en attente d'approbation</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nom complet</th>
+                        <th>CIN</th>
+                        <th>Téléphone</th>
+                        <th>Date d'inscription</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for membre in membres_attente %}
+                    <tr>
+                        <td>{{ membre.nom }} {{ membre.prenom }}</td>
+                        <td>{{ membre.cin }}</td>
+                        <td>{{ membre.telephone }}</td>
+                        <td>{{ membre.date_inscription.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            <a href="{{ url_for('approuver_membre', membre_id=membre.id) }}"
+                               class="btn btn-sm btn-success"
+                               onclick="return confirm('Approuver ce membre ?')">
+                                <i class="fas fa-check"></i> Approuver
+                            </a>
+                            <a href="{{ url_for('refuser_membre', membre_id=membre.id) }}"
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('Refuser ce membre ?')">
+                                <i class="fas fa-times"></i> Refuser
+                            </a>
+                            <button type="button"
+                                    class="btn btn-sm btn-info"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#voirMembre{{ membre.id }}">
+                                <i class="fas fa-eye"></i> Voir
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-user-plus"></i> Créer un Admin Départemental</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('creer_admin_depart') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" required placeholder="admin@departement.ht">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mot de passe</label>
+                        <input type="password" name="password" class="form-control" required minlength="6">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Département</label>
+                        <select name="departement_id" class="form-select" required>
+                            <option value="">Sélectionner un département</option>
+                            {% for dept in departements %}
+                            <option value="{{ dept.id }}">{{ dept.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-plus-circle"></i> Créer l'admin
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-edit"></i> Publier une annonce générale</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('publication_generale') }}" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Titre</label>
+                        <input type="text" name="titre" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contenu</label>
+                        <textarea name="contenu" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <select name="pub_type" class="form-select">
+                            <option value="annonce">Annonce officielle</option>
+                            <option value="commercial">Sponsorisé</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Durée (jours)</label>
+                        <input type="number" name="duree" class="form-control" value="30">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Sponsor</label>
+                        <input type="text" name="sponsor" class="form-control" placeholder="Nom du sponsor (optionnel)">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Lien externe</label>
+                        <input type="url" name="lien" class="form-control" placeholder="https://... (optionnel)">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Lien Vidéo (YouTube, Vimeo, etc.)</label>
+                        <input type="url" name="video" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                        <small class="text-muted">Collez le lien de la vidéo</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Image</label>
+                        <input type="file" name="image" class="form-control" accept="image/*">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-paper-plane"></i> Publier
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Statistiques par département</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Département</th>
+                                <th>Total</th>
+                                <th>Actifs</th>
+                                <th>Attente</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dept in stats.membres_par_departement %}
+                            <tr>
+                                <td><strong>{{ dept.departement }}</strong></td>
+                                <td>{{ dept.total }}</td>
+                                <td class="text-success">{{ dept.actifs }}</td>
+                                <td class="text-warning">{{ dept.en_attente }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Filtre par département - charger les communes
+    document.getElementById('filter_dept').addEventListener('change', function() {
+        const deptId = this.value;
+        const communeSelect = document.getElementById('filter_commune');
+        const sectionSelect = document.getElementById('filter_section');
+
+        if (deptId) {
+            fetch(`/api/communes/${deptId}`)
+                .then(response => response.json())
+                .then(data => {
+                    communeSelect.innerHTML = '<option value="">Toutes les communes</option>';
+                    data.forEach(commune => {
+                        communeSelect.innerHTML += `<option value="${commune.id}">${commune.nom}</option>`;
+                    });
+                    communeSelect.disabled = false;
+                    sectionSelect.innerHTML = '<option value="">Toutes les sections</option>';
+                    sectionSelect.disabled = true;
+                });
+        } else {
+            communeSelect.innerHTML = '<option value="">Toutes</option>';
+            communeSelect.disabled = true;
+            sectionSelect.innerHTML = '<option value="">Toutes</option>';
+            sectionSelect.disabled = true;
+        }
+    });
+
+    // Filtrer par commune - charger les sections
+    document.getElementById('filter_commune').addEventListener('change', function() {
+        const communeId = this.value;
+        const sectionSelect = document.getElementById('filter_section');
+
+        if (communeId) {
+            fetch(`/api/sections/${communeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    sectionSelect.innerHTML = '<option value="">Toutes les sections</option>';
+                    data.forEach(section => {
+                        sectionSelect.innerHTML += `<option value="${section.id}">${section.nom}</option>`;
+                    });
+                    sectionSelect.disabled = false;
+                });
+        } else {
+            sectionSelect.innerHTML = '<option value="">Toutes</option>';
+            sectionSelect.disabled = true;
+        }
+    });
+</script>
+{% endblock %}

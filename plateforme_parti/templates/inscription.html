@@ -1,0 +1,446 @@
+{% extends "base.html" %}
+
+{% block title %}Inscription - LAGEM{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="fas fa-user-plus"></i> Formulaire d'Adhésion LAGEM</h3>
+                <small>Les champs marqués d'un * sont obligatoires</small>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('inscription') }}" id="formInscription" enctype="multipart/form-data">
+
+                    <!-- Étape 1: Informations personnelles -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-user"></i> 1. Informations personnelles</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Nom *</label>
+                                    <input type="text" name="nom" class="form-control" required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Prénom *</label>
+                                    <input type="text" name="prenom" class="form-control" required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Sexe *</label>
+                                    <select name="sexe" class="form-select" required>
+                                        <option value="">Sélectionnez</option>
+                                        <option value="M">Masculin</option>
+                                        <option value="F">Féminin</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Date de naissance *</label>
+                                    <input type="date" name="date_naissance" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Téléphone *</label>
+                                    <input type="tel" name="telephone" class="form-control" required placeholder="3XXX-XXXX">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Email *</label>
+                                    <input type="email" name="email" class="form-control" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Mot de passe *</label>
+                                    <input type="password" name="password" class="form-control" required minlength="6">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Ville natale</label>
+                                    <input type="text" name="ville_natale" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Nationalité</label>
+                                    <input type="text" name="nationalite" class="form-control" value="Haïtienne">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Nombre d'enfants</label>
+                                    <input type="number" name="nb_enfants" class="form-control" value="0" min="0">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Statut matrimonial</label>
+                                    <select name="status_matrimonial" class="form-select">
+                                        <option value="celibataire">Célibataire</option>
+                                        <option value="marie">Marié(e)</option>
+                                        <option value="divorce">Divorcé(e)</option>
+                                        <option value="veuf">Veuf/Veuve</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 2: Adresse -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-map-marker-alt"></i> 2. Adresse</h5>
+                        </div>
+                        <div class="card-body">
+<!--                            <div class="row">-->
+<!--                                <div class="col-md-4 mb-3">-->
+<!--                                    <label class="form-label">Département *</label>-->
+<!--                                    <select name="departement_id" id="departement_id" class="form-select" required>-->
+<!--                                        <option value="">Sélectionnez</option>-->
+<!--                                        {% for dept in departements %}-->
+<!--                                        <option value="{{ dept.id }}">{{ dept.nom }}</option>-->
+<!--                                        {% endfor %}-->
+<!--                                    </select>-->
+<!--                                </div>-->
+<!--                                <div class="col-md-4 mb-3">-->
+<!--                                    <label class="form-label">Commune *</label>-->
+<!--                                    <select name="commune_id" id="commune_id" class="form-select" required disabled>-->
+<!--                                        <option value="">Sélectionnez d'abord un département</option>-->
+<!--                                    </select>-->
+<!--                                </div>-->
+<!--                                <div class="col-md-4 mb-3">-->
+<!--                                    <label class="form-label">Section communale</label>-->
+<!--                                    <select name="section_id" id="section_id" class="form-select" disabled>-->
+<!--                                        <option value="">Sélectionnez d'abord une commune</option>-->
+<!--                                    </select>-->
+<!--                                </div>-->
+<!--                            </div>-->
+                            <div class="row">
+                                <div class="col-md-8 mb-3">
+                                    <label class="form-label">Adresse actuelle *</label>
+                                    <textarea name="adresse_actuelle" class="form-control" rows="2" required placeholder="Rue, numéro, quartier"></textarea>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Temps à cette adresse (années)</label>
+                                    <input type="number" name="temps_adresse" class="form-control" min="0" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Type de membre -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-globe"></i> Situation géographique</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Type de membre *</label>
+                                <select name="type_membre" id="type_membre" class="form-select" required>
+                                    <option value="local">Résident en Haïti</option>
+                                    <option value="diaspora">Membre de la diaspora</option>
+                                </select>
+                            </div>
+
+                            <!-- Section Haïti (local) -->
+                            <div id="section_haiti">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Département *</label>
+                                        <select name="departement_id" id="departement_id" class="form-select">
+                                            <option value="">Sélectionnez</option>
+                                            {% for dept in departements %}
+                                            <option value="{{ dept.id }}">{{ dept.nom }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Commune *</label>
+                                        <select name="commune_id" id="commune_id" class="form-select" disabled>
+                                            <option value="">Sélectionnez d'abord un département</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Section communale</label>
+                                        <select name="section_id" id="section_id" class="form-select" disabled>
+                                            <option value="">Sélectionnez d'abord une commune</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section Diaspora -->
+                            <div id="section_diaspora" style="display: none;">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Pays de résidence *</label>
+                                        <select name="pays_residence" class="form-select">
+                                            <option value="">Sélectionnez un pays</option>
+                                            <option value="France">France</option>
+                                            <option value="Canada">Canada</option>
+                                            <option value="USA">États-Unis</option>
+                                            <option value="République Dominicaine">République Dominicaine</option>
+                                            <option value="Brésil">Brésil</option>
+                                            <option value="Chili">Chili</option>
+                                            <option value="Mexique">Mexique</option>
+                                            <option value="Espagne">Espagne</option>
+                                            <option value="Belgique">Belgique</option>
+                                            <option value="Suisse">Suisse</option>
+                                            <option value="Allemagne">Allemagne</option>
+                                            <option value="Italie">Italie</option>
+                                            <option value="Autre">Autre</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Ville de résidence</label>
+                                        <input type="text" name="ville_residence" class="form-control" placeholder="Ville">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 3: Identification -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-id-card"></i> 3. Identification</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Numéro CIN *</label>
+                                    <input type="text" name="cin" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Numéro NIF (optionnel)</label>
+                                    <input type="text" name="nif" class="form-control" pattern="[0-9]{10}" maxlength="10">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Photo CIN recto *</label>
+                                    <input type="file" name="cin_recto" class="form-control" accept="image/*" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Photo CIN verso *</label>
+                                    <input type="file" name="cin_verso" class="form-control" accept="image/*" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Photo NIF recto</label>
+                                    <input type="file" name="nif_recto" class="form-control" accept="image/*">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Photo NIF verso</label>
+                                    <input type="file" name="nif_verso" class="form-control" accept="image/*">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 4: Photo du membre -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-camera"></i> 4. Photo du membre</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Photo d'identité récente *</label>
+                                    <input type="file" name="photo" class="form-control" accept="image/*" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 5: Informations professionnelles -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-briefcase"></i> 5. Informations professionnelles</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Occupation *</label>
+                                    <input type="text" name="occupation" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Niveau d'étude</label>
+                                    <select name="niveau_etude" class="form-select">
+                                        <option value="">Sélectionnez</option>
+                                        <option>Aucun</option>
+                                        <option>Primaire</option>
+                                        <option>Secondaire</option>
+                                        <option>Baccalauréat</option>
+                                        <option>Licence</option>
+                                        <option>Master</option>
+                                        <option>Doctorat</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Compétences particulières</label>
+                                    <textarea name="competences" class="form-control" rows="2" placeholder="Listez vos compétences..."></textarea>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Domaine d'expertise</label>
+                                    <select name="domaine" class="form-select">
+                                        <option value="">Sélectionnez</option>
+                                        <option>Informatique</option>
+                                        <option>Santé</option>
+                                        <option>Agriculture</option>
+                                        <option>Communication</option>
+                                        <option>Enseignement</option>
+                                        <option>Gestion</option>
+                                        <option>Droit</option>
+                                        <option>Autre</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 6: Engagement -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-handshake"></i> 6. Engagement au sein du parti</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Souhaitez-vous être :</label>
+                                <select name="engagement" class="form-select">
+                                    <option value="simple_membre">Simple membre</option>
+                                    <option value="benevole">Bénévole</option>
+                                    <option value="coordinateur">Coordinateur local</option>
+                                    <option value="observateur">Observateur électoral</option>
+                                    <option value="militant">Militant actif</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 7: Personne à contacter -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-phone-alt"></i> 7. Personne à contacter (urgence)</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nom du contact d'urgence</label>
+                                    <input type="text" name="contact_nom" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Téléphone du contact</label>
+                                    <input type="tel" name="contact_telephone" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 8: Acceptation -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-check-circle"></i> 8. Acceptation</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="certifie" id="certifie" required>
+                                <label class="form-check-label">
+                                    Je certifie que les informations fournies sont exactes.
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="accepte" id="accepte" required>
+                                <label class="form-check-label">
+                                    J'accepte les statuts et règlements de LAGEM.
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle"></i> <strong>Note:</strong> Votre inscription sera validée par l'admin de votre département après vérification de vos documents.
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <i class="fas fa-check-circle"></i> S'inscrire
+                        </button>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary btn-lg px-5">
+                            <i class="fas fa-times-circle"></i> Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Chargement dynamique des communes
+    document.getElementById('departement_id').addEventListener('change', function() {
+        const deptId = this.value;
+        const communeSelect = document.getElementById('commune_id');
+        const sectionSelect = document.getElementById('section_id');
+
+        if (deptId) {
+            fetch(`/api/communes/${deptId}`)
+                .then(response => response.json())
+                .then(data => {
+                    communeSelect.innerHTML = '<option value="">Sélectionnez une commune</option>';
+                    data.forEach(commune => {
+                        communeSelect.innerHTML += `<option value="${commune.id}">${commune.nom}</option>`;
+                    });
+                    communeSelect.disabled = false;
+                    sectionSelect.innerHTML = '<option value="">Sélectionnez d\'abord une commune</option>';
+                    sectionSelect.disabled = true;
+                });
+        } else {
+            communeSelect.innerHTML = '<option value="">Sélectionnez d\'abord un département</option>';
+            communeSelect.disabled = true;
+            sectionSelect.innerHTML = '<option value="">Sélectionnez d\'abord une commune</option>';
+            sectionSelect.disabled = true;
+        }
+    });
+
+    // Chargement dynamique des sections
+    document.getElementById('commune_id').addEventListener('change', function() {
+        const communeId = this.value;
+        const sectionSelect = document.getElementById('section_id');
+
+        if (communeId) {
+            fetch(`/api/sections/${communeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    sectionSelect.innerHTML = '<option value="">Sélectionnez une section</option>';
+                    data.forEach(section => {
+                        sectionSelect.innerHTML += `<option value="${section.id}">${section.nom}</option>`;
+                    });
+                    sectionSelect.disabled = false;
+                });
+        } else {
+            sectionSelect.innerHTML = '<option value="">Sélectionnez d\'abord une commune</option>';
+            sectionSelect.disabled = true;
+        }
+    });
+
+
+    document.getElementById('type_membre').addEventListener('change', function() {
+        const sectionHaiti = document.getElementById('section_haiti');
+        const sectionDiaspora = document.getElementById('section_diaspora');
+
+        if (this.value === 'local') {
+            sectionHaiti.style.display = 'block';
+            sectionDiaspora.style.display = 'none';
+            // Rendre les champs Haïti obligatoires
+            document.getElementById('departement_id').required = true;
+            document.getElementById('commune_id').required = true;
+        } else {
+            sectionHaiti.style.display = 'none';
+            sectionDiaspora.style.display = 'block';
+            // Rendre les champs diaspora obligatoires
+            document.getElementById('departement_id').required = false;
+            document.getElementById('commune_id').required = false;
+        }
+    });
+
+</script>
+{% endblock %}

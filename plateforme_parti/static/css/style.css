@@ -1,0 +1,68 @@
+/* Styles pour la messagerie */
+.message-item {
+    transition: all 0.3s ease;
+}
+
+.message-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.message-item.unread {
+    background-color: #e3f2fd;
+    border-left: 4px solid #0d6efd;
+}
+
+.hover-shadow {
+    transition: all 0.3s ease;
+}
+
+.hover-shadow:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Badge de notification */
+.badge.bg-danger {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Icônes dans les messages */
+.message-item .fa-check-double {
+    color: #28a745;
+}
+
+.message-item .fa-clock {
+    color: #ffc107;
+}
+
+/* Scrollbar personnalisée */
+.card-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.card-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.card-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.card-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
