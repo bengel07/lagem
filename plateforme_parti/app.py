@@ -73,68 +73,6 @@ def index():
     return render_template('index.html', publications=publications, departements=departements, now=now)  # ← AJOUTER now)
 
 
-# @app.route('/inscription', methods=['GET', 'POST'])
-# def inscription():
-#     if request.method == 'POST':
-#         try:
-#             # Vérifier si email existe déjà
-#             if User.query.filter_by(email=request.form.get('email')).first():
-#                 flash('Cet email est déjà utilisé', 'danger')
-#                 return redirect(url_for('inscription'))
-#
-#             # Vérifier NIF et CIN uniques
-#             if Membre.query.filter_by(nif=request.form.get('nif')).first():
-#                 flash('Ce NIF est déjà utilisé', 'danger')
-#                 return redirect(url_for('inscription'))
-#
-#             if Membre.query.filter_by(cin=request.form.get('cin')).first():
-#                 flash('Ce CIN est déjà utilisé', 'danger')
-#                 return redirect(url_for('inscription'))
-#
-#             # Création de l'utilisateur
-#             hashed_password = bcrypt.generate_password_hash(request.form.get('password')).decode('utf-8')
-#             user = User(
-#                 email=request.form.get('email'),
-#                 password=hashed_password,
-#                 role='membre'
-#             )
-#             db.session.add(user)
-#             db.session.flush()
-#
-#             # Création du membre
-#             membre = Membre(
-#                 user_id=user.id,
-#                 nif=request.form.get('nif'),
-#                 cin=request.form.get('cin'),
-#                 nom=request.form.get('nom'),
-#                 prenom=request.form.get('prenom'),
-#                 ville_natale=request.form.get('ville_natale'),
-#                 adresse_actuelle=request.form.get('adresse_actuelle'),
-#                 temps_adresse=int(request.form.get('temps_adresse', 0)),
-#                 telephone=request.form.get('telephone'),
-#                 occupation=request.form.get('occupation'),
-#                 niveau_etude=request.form.get('niveau_etude'),
-#                 nationalite=request.form.get('nationalite', 'Haïtienne'),
-#                 nb_enfants=int(request.form.get('nb_enfants', 0)),
-#                 status_matrimonial=request.form.get('status_matrimonial'),
-#                 departement_id=int(request.form.get('departement_id')),
-#                 statut='en_attente',
-#                 commune_id=request.form.get('commune_id') or None,
-#                 section_id=request.form.get('section_id') or None
-#             )
-#             db.session.add(membre)
-#             db.session.commit()
-#
-#             flash('Inscription réussie! En attente de validation par votre admin départemental.', 'success')
-#             return redirect(url_for('login'))
-#
-#         except Exception as e:
-#             db.session.rollback()
-#             flash(f'Erreur lors de l\'inscription: {str(e)}', 'danger')
-#             return redirect(url_for('inscription'))
-#
-#     departements = Departement.query.all()
-#     return render_template('inscription.html', departements=departements)
 
 
 
@@ -196,7 +134,7 @@ def inscription():
                 status_matrimonial=request.form.get('status_matrimonial'),
                 adresse_actuelle=request.form.get('adresse_actuelle'),
                 temps_adresse=int(request.form.get('temps_adresse', 0)),
-                departement_id=int(request.form.get('departement_id')),
+                departement_id=int(request.form.get('departement_id',0)),
                 commune_id=int(request.form.get('commune_id')) if request.form.get('commune_id') else None,
                 section_id=int(request.form.get('section_id')) if request.form.get('section_id') else None,
                 telephone=request.form.get('telephone'),
